@@ -1,9 +1,8 @@
 import { Server } from 'http';
 import app from './app';
-// import { prisma } from './app/lib/prisma';
 import { errorlogger, logger } from './app/utils/logger';
 import { envVars } from './app/config/env';
-// import { seedSuperAdmin } from './app/utils/seed';
+import { seedSuperAdmin } from './app/utils/seed';
 
 let server: Server;
 
@@ -34,7 +33,7 @@ const shutdown = async (signal: string) => {
 // Bootstrap application
 async function bootstrap() {
   try {
-    // await seedSuperAdmin();
+    await seedSuperAdmin();
     // Start server
     server = app.listen(envVars.PORT, () => {
       logger.info(`Application running on port ${envVars.PORT}`);

@@ -135,11 +135,7 @@ const getMe = async (user: IRequestUser) => {
       id: user.userId,
     },
     include: {
-      Player: {
-        include: {
-          orders: true,
-        },
-      },
+      player: true,
       admin: true,
     },
   });
