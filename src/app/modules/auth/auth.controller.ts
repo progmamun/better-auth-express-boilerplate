@@ -10,14 +10,14 @@ import catchAsync from '../../utils/catchAsync';
 import ApiError from '../../errors/ApiError';
 import { sendResponse } from '../../utils/sendResponse';
 
-const registerCustomer = catchAsync(async (req: Request, res: Response) => {
+const registerPlayer = catchAsync(async (req: Request, res: Response) => {
   const maxAge = ms(envVars.ACCESS_TOKEN_EXPIRES_IN as StringValue);
   console.log({ maxAge });
   const payload = req.body;
 
   console.log(payload);
 
-  const result = await AuthService.registerCustomer(payload);
+  const result = await AuthService.registerPlayer(payload);
 
   const { accessToken, refreshToken, token, ...rest } = result;
 
@@ -28,7 +28,7 @@ const registerCustomer = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatusCode: StatusCodes.CREATED,
     success: true,
-    message: 'Customer registered successfully',
+    message: 'Player registered successfully',
     data: {
       token,
       accessToken,
@@ -78,7 +78,8 @@ const getNewToken = catchAsync(async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
 
   const betterAuthSessionToken =
-    req.cookies?.['better-auth.session_token'] || req.cookies?.['better-auth']?.session_token;
+    req.cookies?.['better-auth.session_token'] ||
+    req.cookies?.['better-auth']?.session_token;
 
   if (!refreshToken) {
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'Refresh token is missing');
@@ -88,7 +89,10 @@ const getNewToken = catchAsync(async (req: Request, res: Response) => {
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'Session token missing');
   }
 
-  const result = await AuthService.getNewToken(refreshToken, betterAuthSessionToken);
+  const result = await AuthService.getNewToken(
+    refreshToken,
+    betterAuthSessionToken
+  );
 
   const { accessToken, refreshToken: newRefreshToken, sessionToken } = result;
 
@@ -112,7 +116,10 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const betterAuthSessionToken = req.cookies['better-auth.session_token'];
 
-  const result = await AuthService.changePassword(payload, betterAuthSessionToken);
+  const result = await AuthService.changePassword(
+    payload,
+    betterAuthSessionToken
+  );
 
   const { accessToken, refreshToken, token } = result;
 
@@ -217,7 +224,8 @@ const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthService.googleLoginSuccess(session);
   const { accessToken, refreshToken } = result;
 
-  const isValidRedirectPath = redirectPath.startsWith('/') && !redirectPath.startsWith('//');
+  const isValidRedirectPath =
+    redirectPath.startsWith('/') && !redirectPath.startsWith('//');
   const finalRedirectPath = isValidRedirectPath ? redirectPath : '/dashboard';
 
   // Pass tokens to frontend via query params, let frontend set cookies
@@ -237,7 +245,7 @@ const handleOAuthError = catchAsync((req: Request, res: Response) => {
 });
 
 export const AuthController = {
-  registerCustomer,
+  registerPlayer,
   loginUser,
   getMe,
   getNewToken,

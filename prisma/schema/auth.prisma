@@ -15,7 +15,8 @@ model User {
     deletedAt          DateTime?
     phone              String?
 
-    admin Admin?
+    admin  Admin?
+    player Player?
 
     @@unique([email])
     @@map("user")

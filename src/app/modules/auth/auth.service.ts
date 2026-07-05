@@ -14,7 +14,7 @@ import ApiError from '../../errors/ApiError';
 import { IRequestUser } from '../../interface/requestUser.interface';
 import { UserStatus } from '../../../generated/enums';
 
-const registerCustomer = async (payload: IRegisterUserPayload) => {
+const registerPlayer = async (payload: IRegisterUserPayload) => {
   const { name, email, password } = payload;
 
   const data = await auth.api.signUpEmail({
@@ -29,14 +29,14 @@ const registerCustomer = async (payload: IRegisterUserPayload) => {
   });
 
   if (!data.user) {
-    // throw new Error("Failed to register customer");
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to register customer');
+    // throw new Error("Failed to register player");
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to register player');
   }
 
-  //TODO : Create Customer Profile In Transaction After Sign Up Of Customer In User Model
+  //TODO : Create Player Profile In Transaction After Sign Up Of player In User Model
   try {
-    const customer = await prisma.$transaction(async tx => {
-      const patientTx = await tx.customer.create({
+    const Player = await prisma.$transaction(async tx => {
+      const playerTx = await tx.player.create({
         data: {
           userId: data.user.id,
           name: payload.name,
@@ -44,7 +44,7 @@ const registerCustomer = async (payload: IRegisterUserPayload) => {
         },
       });
 
-      return patientTx;
+      return playerTx;
     });
 
     const accessToken = tokenUtils.getAccessToken({
@@ -71,7 +71,7 @@ const registerCustomer = async (payload: IRegisterUserPayload) => {
       ...data,
       accessToken,
       refreshToken,
-      customer,
+      Player,
     };
   } catch (error) {
     console.log('Transaction error : ', error);
@@ -135,7 +135,7 @@ const getMe = async (user: IRequestUser) => {
       id: user.userId,
     },
     include: {
-      customer: {
+      Player: {
         include: {
           orders: true,
         },
@@ -394,14 +394,14 @@ const resetPassword = async (
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const googleLoginSuccess = async (session: Record<string, any>) => {
-  const isCustomerExists = await prisma.customer.findUnique({
+  const isPlayerExists = await prisma.player.findUnique({
     where: {
       userId: session.user.id,
     },
   });
 
-  if (!isCustomerExists) {
-    await prisma.customer.create({
+  if (!isPlayerExists) {
+    await prisma.player.create({
       data: {
         userId: session.user.id,
         name: session.user.name,
@@ -429,7 +429,7 @@ const googleLoginSuccess = async (session: Record<string, any>) => {
 };
 
 export const AuthService = {
-  registerCustomer,
+  registerPlayer,
   loginUser,
   getMe,
   getNewToken,
