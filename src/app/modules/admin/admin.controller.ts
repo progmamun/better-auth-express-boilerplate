@@ -72,6 +72,7 @@ const changeUserRole = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
   const payload = req.body;
   const result = await AdminService.changeUserRole(user, payload);
+
   sendResponse(res, {
     httpStatusCode: StatusCodes.OK,
     success: true,

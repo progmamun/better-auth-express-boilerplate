@@ -17,7 +17,7 @@
     "postinstall": "prisma generate --schema=./prisma/schema"
   },
   "keywords": [],
-  "author": "",
+  "author": "Al Mamun Khan",
   "license": "ISC",
   "type": "module",
   "packageManager": "pnpm@10.20.0",
