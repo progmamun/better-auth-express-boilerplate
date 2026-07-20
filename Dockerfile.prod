@@ -27,6 +27,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
-EXPOSE 8000
+EXPOSE 5000
 
 CMD ["tsx", "dist/src/server.js"]
