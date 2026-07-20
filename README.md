@@ -1,4 +1,4 @@
-# Backend Starter
+# Backend Starter | [Frontend Starter](https://github.com/progmamun/nextjs-starter-custom-better-auth)
 
 A production-ready authentication backend built with **Node.js**, **Express.js**, **TypeScript**, **Prisma ORM**, and **PostgreSQL**.
 
