@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { bearer, emailOTP, oAuthProxy } from 'better-auth/plugins';
+import { bearer, emailOTP } from 'better-auth/plugins';
 import { prisma } from './prisma';
 import { envVars } from '../config/env';
 import { sendEmail } from '../utils/email';
@@ -10,11 +10,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 export const auth = betterAuth({
   baseURL: envVars.BETTER_AUTH_URL,
-  trustedOrigins: isProd
-    ? ['https://domain.com.bd', 'https://api.domain.com.bd']
-    : ['http://localhost:3000', 'http://localhost:5000'],
   secret: envVars.BETTER_AUTH_SECRET,
-
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
@@ -85,7 +81,6 @@ export const auth = betterAuth({
 
   plugins: [
     bearer(),
-    oAuthProxy(),
     emailOTP({
       overrideDefaultEmailVerification: true,
       async sendVerificationOTP({ email, otp, type }) {
@@ -163,25 +158,28 @@ export const auth = betterAuth({
   redirectURLs: {
     signIn: `${envVars.BETTER_AUTH_URL}/api/v1/auth/google/success`,
   },
+  trustedOrigins: isProd
+    ? ['https://domain.com.bd', 'https://api.domain.com.bd']
+    : ['http://localhost:3000', 'http://localhost:5000'],
 
   advanced: {
+    // disableCSRFCheck: true,
+    useSecureCookies: false,
     cookies: {
-      session_token: {
-        name: 'session_token', // Force this exact name
+      state: {
         attributes: {
-          httpOnly: true,
-          secure: true,
           sameSite: 'none',
-          partitioned: true,
+          secure: true,
+          httpOnly: true,
+          path: '/',
         },
       },
-      state: {
-        name: 'session_token', // Force this exact name
+      sessionToken: {
         attributes: {
-          httpOnly: true,
-          secure: true,
           sameSite: 'none',
-          partitioned: true,
+          secure: true,
+          httpOnly: true,
+          path: '/',
         },
       },
     },

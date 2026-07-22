@@ -15,7 +15,7 @@ const registerPlayer = catchAsync(async (req: Request, res: Response) => {
   console.log({ maxAge });
   const payload = req.body;
 
-  console.log(payload);
+  // console.log(payload);
 
   const result = await AuthService.registerPlayer(payload);
 
@@ -62,7 +62,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 
 const getMe = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
-  console.log({ user });
+  // console.log({ user });
   const result = await AuthService.getMe(user);
   sendResponse(res, {
     httpStatusCode: StatusCodes.OK,
